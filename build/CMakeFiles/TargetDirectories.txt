@@ -1,0 +1,3 @@
+D:/Mandrelbrot_CUDA/build/CMakeFiles/ALL_BUILD.dir
+D:/Mandrelbrot_CUDA/build/CMakeFiles/ZERO_CHECK.dir
+D:/Mandrelbrot_CUDA/build/src/CMakeFiles/mandelbrot.dir
