@@ -6,7 +6,15 @@ project(
   Mandelbrot_CUDA
   VERSION 0.1
   DESCRIPTION "Mandelbrot set generation accelerated with CUDA"
-  LANGUAGES CXX)
+  LANGUAGES CUDA CXX)
+
+include(CheckLanguage)
+check_language(CUDA)
+
+if(NOT DEFINED CMAKE_CUDA_STANDARD)
+    set(CMAKE_CUDA_STANDARD 11)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+endif()
 
 # The compiled library code is here
 add_subdirectory(src)
