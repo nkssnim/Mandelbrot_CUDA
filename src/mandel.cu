@@ -4,6 +4,8 @@
 #include "save_image.h"
 #include "utils.h"
 #include <vector>
+#include <iostream>
+#include <stdio.h>
 
 #define Y_MIN 0
 #define Y_MAX 1200
@@ -48,15 +50,12 @@ int escape(Complex c) {
 // Loop over each pixel from our image and check if the points associated with this pixel escape to infinity
 __global__
 void get_number_iterations(int* colors) {
-	int k = 0, progress = -1;
 	int row = blockIdx.x * blockDim.x + threadIdx.x;
 	int col = blockIdx.y * blockDim.y + threadIdx.y;
 	if (row < (X_MAX - X_MIN) && col < (Y_MAX - Y_MIN)){
-		for (int i = 0; i < (Y_MAX - Y_MIN); i++){
-			Complex c = make_cuDoubleComplex((double)row, (double)col);
-			c = scale(c);
-			colors[k++] = escape(c);
-		}
+		Complex c = make_cuDoubleComplex((double)row, (double)col);
+		c = scale(c);
+		colors[row * (X_MAX - X_MIN) + col] = escape(c);
 	}
 	// for(int i = scr.y_min(); i < scr.y_max(); ++i) {
 	// 	for(int j = scr.x_min(); j < scr.x_max(); ++j) {
@@ -87,7 +86,7 @@ void get_number_iterations(int* colors) {
 void fractal(window<int> &scr, window<double> &fract, int* colors, const char *fname, bool smooth_color){
 	//auto start = std::chrono::high_resolution_clock::now();
 	dim3 threads_per_block (16, 16, 1);
-	dim3 number_of_blocks (((Y_MAX - Y_MIN) / threads_per_block.x) + 1, ((X_MAX - X_MIN) / threads_per_block.y) + 1, 1);
+	dim3 number_of_blocks (((Y_MAX - Y_MIN) / threads_per_block.x), ((X_MAX - X_MIN) / threads_per_block.y), 1);
 	get_number_iterations<<<number_of_blocks, threads_per_block>>>(colors);
 	cudaDeviceSynchronize();
 	std::vector<int> colorVec(scr.size());
